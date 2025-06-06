@@ -13,7 +13,7 @@ import { type LoginModel, loginModel } from "@/lib/models/auth";
 import { cn } from "@/lib/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_auth/login")({
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(loginModel),
 		mode: "onChange",
@@ -30,7 +31,8 @@ function RouteComponent() {
 	const { mutateAsync: login, isPending } = useMutation({
 		mutationFn: (data: LoginModel) => api.post("/sellers/sessions", data),
 		onSuccess: (data) => {
-			console.log(data);
+			localStorage.setItem("token", data.data.accessToken);
+			navigate({ to: "/" });
 		},
 		onError: (error) => {
 			console.error(error);

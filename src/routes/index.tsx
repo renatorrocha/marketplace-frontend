@@ -1,9 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Navigate, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-	component: App,
-});
+	component: () => {
+		const token = localStorage.getItem("token");
 
-function App() {
-	return <div>Hello World</div>;
-}
+		if (!token) {
+			return <Navigate to="/login" />;
+		}
+
+		return <Navigate to="/dashboard" />;
+	},
+});
