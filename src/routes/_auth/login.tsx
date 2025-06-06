@@ -8,11 +8,13 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api/axios";
 import { type LoginModel, loginModel } from "@/lib/models/auth";
 import { cn } from "@/lib/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/_auth/login")({
@@ -25,8 +27,18 @@ function RouteComponent() {
 		mode: "onChange",
 	});
 
+	const { mutateAsync: login, isPending } = useMutation({
+		mutationFn: (data: LoginModel) => api.post("/sellers/sessions", data),
+		onSuccess: (data) => {
+			console.log(data);
+		},
+		onError: (error) => {
+			console.error(error);
+		},
+	});
+
 	async function onSubmit(data: LoginModel) {
-		console.log(data);
+		await login(data);
 	}
 
 	return (
@@ -75,9 +87,18 @@ function RouteComponent() {
 						/>
 					</div>
 
-					<Button type="submit" className="w-full justify-between p-5">
-						Acessar
-						<ArrowRight />
+					<Button
+						type="submit"
+						className="w-full justify-between p-5 disabled:opacity-50"
+						disabled={isPending}
+					>
+						{isPending ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							"Acessar"
+						)}
+
+						{!isPending && <ArrowRight />}
 					</Button>
 				</form>
 			</Form>
