@@ -2,14 +2,38 @@ import logo from "@/assets/logo.svg";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
-import { Link, Outlet, createFileRoute } from "@tanstack/react-router";
+import {
+	Link,
+	Navigate,
+	Outlet,
+	createFileRoute,
+} from "@tanstack/react-router";
 import { ChartBar, Package, Plus, User } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
+	loader: async () => {
+		const isAuthenticated = localStorage.getItem("token");
+
+		if (!isAuthenticated) {
+			return {
+				isAuthenticated: false,
+			};
+		}
+
+		return {
+			isAuthenticated: true,
+		};
+	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { isAuthenticated } = Route.useLoaderData();
+
+	if (!isAuthenticated) {
+		return <Navigate to="/login" />;
+	}
+
 	return (
 		<div className="flex flex-col min-h-screen">
 			<header className="border-shape border-b flex justify-between items-center p-4">
