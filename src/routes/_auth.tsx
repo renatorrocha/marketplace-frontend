@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_auth")({
 function RouteComponent() {
 	return (
 		<div className="bg-background min-h-screen flex">
-			<aside className="w-[60%] ml-10">
+			<aside className="w-[60%] ml-10 hidden md:block">
 				<figure className="mt-10">
 					<img src={logoWithName} alt="logo" />
 				</figure>
@@ -19,7 +19,7 @@ function RouteComponent() {
 				</figure>
 			</aside>
 
-			<aside className="w-[40%] m-6 px-[80px] py-[72px] bg-white rounded-[32px]">
+			<aside className="w-full md:w-[40%] m-6 px-[80px] py-[72px] bg-white rounded-[32px]">
 				<Outlet />
 			</aside>
 		</div>
