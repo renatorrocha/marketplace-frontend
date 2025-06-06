@@ -13,6 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as IndexImport } from './routes/index'
 import { Route as DemoTanstackQueryImport } from './routes/demo.tanstack-query'
+import { Route as AuthRegisterImport } from './routes/_auth/register'
+import { Route as AuthLoginImport } from './routes/_auth/login'
+import { Route as AuthenticatedProductsIndexImport } from './routes/_authenticated/products/index'
+import { Route as AuthenticatedDashboardIndexImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedProductsNewImport } from './routes/_authenticated/products/new'
+import { Route as AuthenticatedProductsProductIdEditImport } from './routes/_authenticated/products/$product-id.edit'
 
 // Create/Update Routes
 
@@ -28,6 +34,46 @@ const DemoTanstackQueryRoute = DemoTanstackQueryImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthRegisterRoute = AuthRegisterImport.update({
+  id: '/_auth/register',
+  path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthLoginRoute = AuthLoginImport.update({
+  id: '/_auth/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedProductsIndexRoute = AuthenticatedProductsIndexImport.update(
+  {
+    id: '/_authenticated/products/',
+    path: '/products/',
+    getParentRoute: () => rootRoute,
+  } as any,
+)
+
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexImport.update({
+    id: '/_authenticated/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => rootRoute,
+  } as any)
+
+const AuthenticatedProductsNewRoute = AuthenticatedProductsNewImport.update({
+  id: '/_authenticated/products/new',
+  path: '/products/new',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedProductsProductIdEditRoute =
+  AuthenticatedProductsProductIdEditImport.update({
+    id: '/_authenticated/products/$product-id/edit',
+    path: '/products/$product-id/edit',
+    getParentRoute: () => rootRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -39,11 +85,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof AuthLoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/_auth/register': {
+      id: '/_auth/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof AuthRegisterImport
+      parentRoute: typeof rootRoute
+    }
     '/demo/tanstack-query': {
       id: '/demo/tanstack-query'
       path: '/demo/tanstack-query'
       fullPath: '/demo/tanstack-query'
       preLoaderRoute: typeof DemoTanstackQueryImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/products/new': {
+      id: '/_authenticated/products/new'
+      path: '/products/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof AuthenticatedProductsNewImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/products/': {
+      id: '/_authenticated/products/'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof AuthenticatedProductsIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/products/$product-id/edit': {
+      id: '/_authenticated/products/$product-id/edit'
+      path: '/products/$product-id/edit'
+      fullPath: '/products/$product-id/edit'
+      preLoaderRoute: typeof AuthenticatedProductsProductIdEditImport
       parentRoute: typeof rootRoute
     }
   }
@@ -53,37 +141,93 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/products': typeof AuthenticatedProductsIndexRoute
+  '/products/$product-id/edit': typeof AuthenticatedProductsProductIdEditRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof AuthLoginRoute
+  '/register': typeof AuthRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/products/new': typeof AuthenticatedProductsNewRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/products': typeof AuthenticatedProductsIndexRoute
+  '/products/$product-id/edit': typeof AuthenticatedProductsProductIdEditRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_auth/login': typeof AuthLoginRoute
+  '/_auth/register': typeof AuthRegisterRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/_authenticated/products/new': typeof AuthenticatedProductsNewRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/products/': typeof AuthenticatedProductsIndexRoute
+  '/_authenticated/products/$product-id/edit': typeof AuthenticatedProductsProductIdEditRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demo/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/demo/tanstack-query'
+    | '/products/new'
+    | '/dashboard'
+    | '/products'
+    | '/products/$product-id/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demo/tanstack-query'
-  id: '__root__' | '/' | '/demo/tanstack-query'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/demo/tanstack-query'
+    | '/products/new'
+    | '/dashboard'
+    | '/products'
+    | '/products/$product-id/edit'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth/login'
+    | '/_auth/register'
+    | '/demo/tanstack-query'
+    | '/_authenticated/products/new'
+    | '/_authenticated/dashboard/'
+    | '/_authenticated/products/'
+    | '/_authenticated/products/$product-id/edit'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  AuthenticatedProductsNewRoute: typeof AuthenticatedProductsNewRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedProductsIndexRoute: typeof AuthenticatedProductsIndexRoute
+  AuthenticatedProductsProductIdEditRoute: typeof AuthenticatedProductsProductIdEditRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  AuthenticatedProductsNewRoute: AuthenticatedProductsNewRoute,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedProductsIndexRoute: AuthenticatedProductsIndexRoute,
+  AuthenticatedProductsProductIdEditRoute:
+    AuthenticatedProductsProductIdEditRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +241,38 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/demo/tanstack-query"
+        "/_auth/login",
+        "/_auth/register",
+        "/demo/tanstack-query",
+        "/_authenticated/products/new",
+        "/_authenticated/dashboard/",
+        "/_authenticated/products/",
+        "/_authenticated/products/$product-id/edit"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/_auth/login": {
+      "filePath": "_auth/login.tsx"
+    },
+    "/_auth/register": {
+      "filePath": "_auth/register.tsx"
+    },
     "/demo/tanstack-query": {
       "filePath": "demo.tanstack-query.tsx"
+    },
+    "/_authenticated/products/new": {
+      "filePath": "_authenticated/products/new.tsx"
+    },
+    "/_authenticated/dashboard/": {
+      "filePath": "_authenticated/dashboard/index.tsx"
+    },
+    "/_authenticated/products/": {
+      "filePath": "_authenticated/products/index.tsx"
+    },
+    "/_authenticated/products/$product-id/edit": {
+      "filePath": "_authenticated/products/$product-id.edit.tsx"
     }
   }
 }
