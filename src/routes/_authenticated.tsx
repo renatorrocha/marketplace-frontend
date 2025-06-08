@@ -1,37 +1,55 @@
 import logo from "@/assets/logo.svg";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AvatarDropdown } from "@/components/avatar-dropdown";
 import { buttonVariants } from "@/components/ui/button";
+import { api } from "@/lib/api/axios";
 import { cn } from "@/lib/utils/cn";
 import {
 	Link,
 	Navigate,
 	Outlet,
 	createFileRoute,
+	useNavigate,
 } from "@tanstack/react-router";
-import { ChartBar, Package, Plus, User } from "lucide-react";
+import { ChartBar, Package, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
 	loader: async () => {
-		const isAuthenticated = localStorage.getItem("token");
+		const token = localStorage.getItem("token");
 
-		if (!isAuthenticated) {
+		if (!token) {
 			return {
 				isAuthenticated: false,
 			};
 		}
 
-		return {
-			isAuthenticated: true,
-		};
+		try {
+			const response = await api.get("/sellers/me");
+
+			return {
+				isAuthenticated: true,
+				user: response.data,
+			};
+		} catch (error) {
+			localStorage.removeItem("token");
+			return {
+				isAuthenticated: false,
+			};
+		}
 	},
 	component: RouteComponent,
 });
 
 function RouteComponent() {
-	const { isAuthenticated } = Route.useLoaderData();
+	const { isAuthenticated, user } = Route.useLoaderData();
+	const navigate = useNavigate();
 
 	if (!isAuthenticated) {
 		return <Navigate to="/login" />;
+	}
+
+	function onSignOut() {
+		localStorage.removeItem("token");
+		navigate({ to: "/login" });
 	}
 
 	return (
@@ -76,11 +94,7 @@ function RouteComponent() {
 						<Plus /> Adicionar Produto
 					</Link>
 
-					<Avatar>
-						<AvatarFallback>
-							<User />
-						</AvatarFallback>
-					</Avatar>
+					<AvatarDropdown user={user.seller} onSignOut={onSignOut} />
 				</div>
 			</header>
 
