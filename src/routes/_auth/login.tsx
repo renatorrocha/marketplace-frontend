@@ -91,7 +91,10 @@ function RouteComponent() {
 
 					<Button
 						type="submit"
-						className="w-full justify-between p-5 disabled:opacity-50"
+						className={cn(
+							"w-full justify-between p-5 disabled:opacity-50",
+							isPending && "opacity-50 justify-center",
+						)}
 						disabled={isPending}
 					>
 						{isPending ? (

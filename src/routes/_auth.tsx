@@ -1,12 +1,32 @@
 import backgroundImage from "@/assets/background.png";
 import logoWithName from "@/assets/logo-with-name.svg";
-import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { Navigate, Outlet, createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_auth")({
+	loader: async () => {
+		const isAuthenticated = localStorage.getItem("token");
+
+		if (!isAuthenticated) {
+			return {
+				isAuthenticated: false,
+			};
+		}
+
+		return {
+			isAuthenticated: true,
+		};
+	},
+
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { isAuthenticated } = Route.useLoaderData();
+
+	if (isAuthenticated) {
+		return <Navigate to="/" />;
+	}
+
 	return (
 		<div className="bg-background min-h-screen flex">
 			<aside className="w-[60%] ml-10 hidden md:block">
