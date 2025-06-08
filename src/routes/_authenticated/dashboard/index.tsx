@@ -30,6 +30,14 @@ function RouteComponent() {
 			return api.get("/sellers/metrics/views");
 		},
 	});
+
+	const { data: viewsPerDay } = useQuery({
+		queryKey: ["dashboard", "viewsPerDay"],
+		queryFn: () => {
+			return api.get("/sellers/metrics/views/days");
+		},
+	});
+
 	return (
 		<div className="mt-16 mx-auto max-w-screen-lg">
 			<div className="space-y-2">
@@ -57,8 +65,8 @@ function RouteComponent() {
 						icon={<Users />}
 					/>
 				</div>
-				<div className="flex-1 bg-green-400">
-					<MetricChart />
+				<div className="flex-1">
+					<MetricChart data={viewsPerDay?.data.viewsPerDay ?? []} />
 				</div>
 			</div>
 		</div>
