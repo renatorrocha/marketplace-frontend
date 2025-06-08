@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Calendar } from "lucide-react";
+import { Calendar, Users } from "lucide-react";
 import {
 	CartesianGrid,
 	Line,
@@ -32,8 +32,6 @@ export default function MetricChart({ data }: MetricChartProps) {
 			locale: ptBR,
 		}),
 	}));
-
-	console.log(chartData);
 
 	return (
 		<div className="p-6 rounded-[20px] bg-white flex-1">
@@ -76,7 +74,25 @@ export default function MetricChart({ data }: MetricChartProps) {
 							tickLine={false}
 							allowDecimals={false}
 						/>
-						<Tooltip />
+						<Tooltip
+							content={(props) => (
+								<div className="rounded-[8px] bg-white p-3 border space-y-2">
+									<p className="text-gray-400">
+										{format(
+											new Date(data[0]?.date ?? new Date()),
+											"dd 'de' MMMM",
+											{
+												locale: ptBR,
+											},
+										)}
+									</p>
+									<span className="text-gray-300 flex">
+										<Users className="size-4 text-gray-300 mr-2" />
+										{props.payload?.[0]?.payload.amount} visitantes
+									</span>
+								</div>
+							)}
+						/>
 						<Line
 							dataKey="amount"
 							type="monotone"
