@@ -14,8 +14,10 @@ import { cn } from "@/lib/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_auth/login")({
 	component: RouteComponent,
@@ -32,10 +34,15 @@ function RouteComponent() {
 		mutationFn: (data: LoginModel) => api.post("/sellers/sessions", data),
 		onSuccess: (data) => {
 			localStorage.setItem("token", data.data.accessToken);
-			navigate({ to: "/" });
+			navigate({ to: "/dashboard" });
+			toast.success("Login realizado com sucesso");
 		},
-		onError: (error) => {
-			console.error(error);
+		onError: (error: AxiosError) => {
+			if (error.status === 403) {
+				toast.error("Credenciais inválidas");
+			} else {
+				toast.error("Erro ao realizar login");
+			}
 		},
 	});
 

@@ -59,7 +59,7 @@ function RouteComponent() {
 					<img src={logo} alt="logo" />
 				</figure>
 
-				<nav className="flex gap-4">
+				<nav className="flex gap-4 absolute left-1/2 -translate-x-1/2">
 					<Link
 						to="/dashboard"
 						activeProps={{
