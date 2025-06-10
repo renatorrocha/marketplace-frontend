@@ -47,7 +47,8 @@ function RouteComponent() {
 		return <Navigate to="/login" />;
 	}
 
-	function onSignOut() {
+	async function onSignOut() {
+		await api.post("/sign-out");
 		localStorage.removeItem("token");
 		navigate({ to: "/login" });
 	}

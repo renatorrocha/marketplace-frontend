@@ -8,25 +8,47 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api/axios";
 import { type RegisterModel, registerModel } from "@/lib/models/auth";
 import { cn } from "@/lib/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_auth/register")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(registerModel),
 		mode: "onChange",
 	});
 
+	const { mutateAsync: register, isPending } = useMutation({
+		mutationFn: (data: RegisterModel) => api.post("/sellers", data),
+		onSuccess: () => {
+			toast.success("Cadastro realizado com sucesso");
+			navigate({ to: "/login" });
+		},
+		onError: (error: AxiosError) => {
+			if (error.status === 409) {
+				toast.error("E-mail já cadastrado");
+			} else if (error.status === 404) {
+				toast.error("Foto do perfil não encontrada");
+			} else {
+				toast.error("Erro ao realizar cadastro");
+			}
+		},
+	});
+
 	async function onSubmit(data: RegisterModel) {
-		console.log(data);
+		await register(data);
 	}
 
 	return (
@@ -114,7 +136,7 @@ function RouteComponent() {
 
 						<FormField
 							control={form.control}
-							name="confirmPassword"
+							name="passwordConfirmation"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Confirmar senha</FormLabel>
@@ -129,8 +151,14 @@ function RouteComponent() {
 					</div>
 
 					<Button type="submit" className="w-full justify-between p-5">
-						Cadastrar
-						<ArrowRight />
+						{isPending ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							<>
+								Cadastrar
+								<ArrowRight />
+							</>
+						)}
 					</Button>
 				</form>
 			</Form>
