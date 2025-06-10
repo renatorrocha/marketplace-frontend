@@ -11,7 +11,7 @@ export type LoginModel = z.infer<typeof loginModel>;
 
 export const registerModel = z
 	.object({
-		// profileImage: z.instanceof(File),
+		avatarId: z.string({ required_error: "Foto do perfil é obrigatória" }),
 		name: z.string({ required_error: "Nome é obrigatório" }),
 		phone: z.string({ required_error: "Telefone é obrigatório" }),
 		email: z
@@ -21,15 +21,15 @@ export const registerModel = z
 		password: z
 			.string({ required_error: "Senha é obrigatória" })
 			.transform((data) => data),
-		confirmPassword: z
+		passwordConfirmation: z
 			.string({
 				required_error: "Confirmação de senha é obrigatória",
 			})
 			.transform((data) => data),
 	})
-	.refine((data) => data.password === data.confirmPassword, {
+	.refine((data) => data.password === data.passwordConfirmation, {
 		message: "As senhas não coincidem",
-		path: ["confirmPassword"],
+		path: ["passwordConfirmation"],
 	});
 
 export type RegisterModel = z.infer<typeof registerModel>;

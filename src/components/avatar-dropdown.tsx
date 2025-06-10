@@ -2,14 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 
 interface AvatarDropdownProps {
@@ -47,21 +45,13 @@ export function AvatarDropdown({ user, onSignOut }: AvatarDropdownProps) {
 					</div>
 				</DropdownMenuLabel>
 				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem>
-						<Settings className="mr-2 h-4 w-4" />
-						<span>Configurações</span>
-						<DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
+
 				<DropdownMenuItem
 					onClick={onSignOut}
 					className="text-red-600 focus:text-red-600"
 				>
 					<LogOut className="mr-2 h-4 w-4" />
 					<span>Sair</span>
-					<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

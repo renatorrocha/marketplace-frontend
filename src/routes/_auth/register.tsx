@@ -7,26 +7,66 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
+import { api } from "@/lib/api/axios";
 import { type RegisterModel, registerModel } from "@/lib/models/auth";
 import { cn } from "@/lib/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_auth/register")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const navigate = useNavigate();
 	const form = useForm({
 		resolver: zodResolver(registerModel),
 		mode: "onChange",
 	});
 
+	const { mutateAsync: register, isPending } = useMutation({
+		mutationFn: (data: RegisterModel) => api.post("/sellers", data),
+		onSuccess: () => {
+			toast.success("Cadastro realizado com sucesso");
+			navigate({ to: "/login" });
+		},
+		onError: (error: AxiosError<{ message: string }>) => {
+			if (error.response?.status === 409) {
+				toast.error("E-mail ou telefone já cadastrado");
+			} else if (error.status === 404) {
+				toast.error("Foto do perfil não encontrada");
+			} else {
+				toast.error("Erro ao realizar cadastro");
+			}
+		},
+	});
+
+	const { mutateAsync: uploadAvatar } = useMutation({
+		mutationFn: (file: File) => {
+			const formData = new FormData();
+			formData.append("files", file);
+
+			return api.post("/attachments", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			});
+		},
+		onSuccess: (data) => {
+			console.log(data.data.attachments[0].id);
+			form.setValue("avatarId", data.data.attachments[0].id);
+		},
+	});
+
 	async function onSubmit(data: RegisterModel) {
-		console.log(data);
+		await register(data);
 	}
 
 	return (
@@ -46,7 +86,14 @@ function RouteComponent() {
 					<div className="space-y-5">
 						<p className="title-sm text-gray-500">Perfil</p>
 
-						<input type="image" alt="Foto do perfil" />
+						<ImageUpload
+							onImageSelect={(file) => {
+								uploadAvatar(file);
+							}}
+						/>
+						<p className="text-red-500 body-sm">
+							{form.formState.errors.avatarId?.message}
+						</p>
 
 						<FormField
 							control={form.control}
@@ -114,7 +161,7 @@ function RouteComponent() {
 
 						<FormField
 							control={form.control}
-							name="confirmPassword"
+							name="passwordConfirmation"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Confirmar senha</FormLabel>
@@ -129,8 +176,14 @@ function RouteComponent() {
 					</div>
 
 					<Button type="submit" className="w-full justify-between p-5">
-						Cadastrar
-						<ArrowRight />
+						{isPending ? (
+							<Loader2 className="w-4 h-4 animate-spin" />
+						) : (
+							<>
+								Cadastrar
+								<ArrowRight />
+							</>
+						)}
 					</Button>
 				</form>
 			</Form>
@@ -145,7 +198,7 @@ function RouteComponent() {
 						"justify-between p-5",
 					)}
 				>
-					Cadastrar
+					Entrar
 					<ArrowRight />
 				</Link>
 			</div>
