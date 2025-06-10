@@ -11,7 +11,7 @@ export type LoginModel = z.infer<typeof loginModel>;
 
 export const registerModel = z
 	.object({
-		// profileImage: z.instanceof(File),
+		avatarId: z.string({ required_error: "Foto do perfil é obrigatória" }),
 		name: z.string({ required_error: "Nome é obrigatório" }),
 		phone: z.string({ required_error: "Telefone é obrigatório" }),
 		email: z

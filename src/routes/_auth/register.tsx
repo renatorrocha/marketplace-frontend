@@ -7,6 +7,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api/axios";
 import { type RegisterModel, registerModel } from "@/lib/models/auth";
@@ -36,14 +37,31 @@ function RouteComponent() {
 			toast.success("Cadastro realizado com sucesso");
 			navigate({ to: "/login" });
 		},
-		onError: (error: AxiosError) => {
-			if (error.status === 409) {
-				toast.error("E-mail já cadastrado");
+		onError: (error: AxiosError<{ message: string }>) => {
+			if (error.response?.status === 409) {
+				toast.error("E-mail ou telefone já cadastrado");
 			} else if (error.status === 404) {
 				toast.error("Foto do perfil não encontrada");
 			} else {
 				toast.error("Erro ao realizar cadastro");
 			}
+		},
+	});
+
+	const { mutateAsync: uploadAvatar } = useMutation({
+		mutationFn: (file: File) => {
+			const formData = new FormData();
+			formData.append("files", file);
+
+			return api.post("/attachments", formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			});
+		},
+		onSuccess: (data) => {
+			console.log(data.data.attachments[0].id);
+			form.setValue("avatarId", data.data.attachments[0].id);
 		},
 	});
 
@@ -68,7 +86,14 @@ function RouteComponent() {
 					<div className="space-y-5">
 						<p className="title-sm text-gray-500">Perfil</p>
 
-						<input type="image" alt="Foto do perfil" />
+						<ImageUpload
+							onImageSelect={(file) => {
+								uploadAvatar(file);
+							}}
+						/>
+						<p className="text-red-500 body-sm">
+							{form.formState.errors.avatarId?.message}
+						</p>
 
 						<FormField
 							control={form.control}
@@ -173,7 +198,7 @@ function RouteComponent() {
 						"justify-between p-5",
 					)}
 				>
-					Cadastrar
+					Entrar
 					<ArrowRight />
 				</Link>
 			</div>
