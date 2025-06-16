@@ -14,7 +14,7 @@ export default function ProductsFilter({ route }: { route: AnyRoute }) {
 	};
 
 	return (
-		<div className="p-6 bg-white rounded-2xl w-full max-w-[327px] flex flex-col gap-6">
+		<div className="p-6 h-fit bg-white rounded-2xl w-full max-w-[327px] flex flex-col gap-6">
 			<p className="title-sm text-gray-300">Filtrar</p>
 
 			<div className="space-y-10">

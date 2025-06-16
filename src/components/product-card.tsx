@@ -1,14 +1,25 @@
 import type { ProductModel } from "@/lib/models/product";
+import { useNavigate } from "@tanstack/react-router";
+import StatusBadge from "./status-badge";
 import { Badge } from "./ui/badge";
 
 export default function ProductCard({ product }: { product: ProductModel }) {
-	console.log(product);
+	const navigate = useNavigate();
+
 	return (
-		<div className="p-1 rounded-3xl bg-white space-y-4 w-[320px] relative">
-			<div className="absolute top-2 right-2">
-				<Badge variant="outline" className="text-gray-500">
-					{product.categoryId}
-				</Badge>
+		<div
+			className="p-1 rounded-3xl bg-white space-y-4 w-[320px] relative cursor-pointer"
+			onClick={() => {
+				navigate({
+					to: "/products/$product-id/edit",
+					params: { "product-id": product.id },
+				});
+			}}
+		>
+			<div className="absolute top-2 right-2 space-x-1">
+				<StatusBadge status={product.status} />
+
+				<Badge className="bg-gray-400">{product.category.title}</Badge>
 			</div>
 
 			<figure className="h-[140px]">
